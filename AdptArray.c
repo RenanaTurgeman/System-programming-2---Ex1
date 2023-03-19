@@ -15,6 +15,7 @@ typedef struct AdptArray_
 
 PAdptArray CreateAdptArray(COPY_FUNC copyFunc_, DEL_FUNC delFunc_ , PRINT_FUNC printFunc_)
 {
+	//initialization
 	PAdptArray pArr = (PAdptArray)malloc(sizeof(AdptArray));
 	if (pArr == NULL)
 		return NULL;
@@ -30,26 +31,26 @@ PAdptArray CreateAdptArray(COPY_FUNC copyFunc_, DEL_FUNC delFunc_ , PRINT_FUNC p
 Result SetAdptArrayAt(PAdptArray pArr, int idx, PElement pNewElem)
 {
 	PElement* newpElemArr;
-	if (pArr == NULL)
+
+	if (pArr == NULL) //the pointer is to null
 		return FAIL;
-	if (idx < 0)
+	if (idx < 0) //idx should be non nagative
 		return FAIL;
 	if (idx >= pArr->ArrSize)
 	{
-		
-// Extend Array
+		// Extend Array - when the idx is bigger then the arr
 		if ((newpElemArr = (PElement*)calloc((idx + 1), sizeof(PElement))) == NULL)
 			return FAIL;
 		memcpy(newpElemArr, pArr->pElemArr, (pArr->ArrSize) * sizeof(PElement));
-		free(pArr->pElemArr);
-		pArr->pElemArr = newpElemArr;
+		free(pArr->pElemArr); //free the old
+		pArr->pElemArr = newpElemArr; //save the new
 	}
 
 	// Delete Previous Elem
-	// pArr->delFunc((pArr->pElemArr)[idx]);
 	if((pArr->pElemArr)[idx] != NULL){
 			pArr->delFunc((pArr->pElemArr)[idx]);
 	}
+	//Save copy of the new Elem
 	(pArr->pElemArr)[idx] = pArr->copyFunc(pNewElem);
 
 	// Update Array Size
@@ -60,11 +61,12 @@ Result SetAdptArrayAt(PAdptArray pArr, int idx, PElement pNewElem)
 
 void DeleteAdptArray(PAdptArray pArr)
 {
-	int i;
 	if (pArr == NULL)
 		return;
-	for(i = 0; i < pArr->ArrSize; ++i)
+
+	for(int i = 0; i < pArr->ArrSize; ++i)
 	{
+		//we need to del all the elements using the del func
 		if ((pArr->pElemArr)[i] != NULL)
 			pArr->delFunc((pArr->pElemArr)[i]);
 	}
@@ -89,7 +91,7 @@ PElement GetAdptArrayAt(PAdptArray pArr, int idx)
 int GetAdptArraySize(PAdptArray pArr)
 {
 	if (pArr == NULL)
-		return -1;
+		return -1; //for the case the arr dont initialized in sucsses
 
 	return pArr->ArrSize;
 }
